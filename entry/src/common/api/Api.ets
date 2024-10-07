@@ -1,8 +1,8 @@
-import axios from '@ohos/axios'
-import {BASE_URL} from '../config/environment'
+import axios, { AxiosResponse } from '@ohos/axios';
+import { BASE_URL } from '../config/environment';
 
 const axiosInstance = axios.create({
-  baseURL:BASE_URL,
+  baseURL: BASE_URL,
 });
 
-export default axiosInstance;
+export { axiosInstance, AxiosResponse };

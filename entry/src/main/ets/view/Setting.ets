@@ -7,6 +7,12 @@ import ItemData from '../model/ItemDataModel'
 import mainViewModel from '../viewmodel/MainViewModel'
 import { router } from '@kit.ArkUI'
 import { logout,UserInfo } from '../../../../src/common/api/Account';
+import { AvoidRepeatClick } from '../common/AvoidRepeatClick';
+import { RegisterPage } from './RegisterPage';
+import { UserInfoPage } from './UserInfoPage';
+import localizationManager from '../../../common/utils/LocalizationManager';
+import applicationConfigurationManager, {Language}  from '../../../common/utils/ApplicationConfigurationManager';
+
 
 /**
  * Setting tab content
@@ -14,6 +20,11 @@ import { logout,UserInfo } from '../../../../src/common/api/Account';
 @Component
 export default struct Setting {
   private userInfo = AppStorage.get('userInfo') as UserInfo;
+  @State languages:Language[]=[]
+
+  async aboutToAppear() {
+    this.languages = applicationConfigurationManager.getLanguages();
+  }
   @Builder settingCell(item: ItemData) {
     Row() {
       Row({ space: CommonConstants.COMMON_SPACE }) {
@@ -38,28 +49,48 @@ export default struct Setting {
   build() {
     Scroll() {
       Column({ space: CommonConstants.COMMON_SPACE }) {
-        Row() {
-          Image($r('app.media.ic_account'))
-            .width($r('app.float.setting_account_size'))
-            .height($r('app.float.setting_account_size'))
-          Column() {
-            Text(this.userInfo?.preferred_username)
-              .fontSize($r('app.float.setting_account_fontSize'))
-            Text(this.userInfo?.email)
-              .fontSize($r('app.float.little_text_size'))
-              .margin({ top: $r('app.float.setting_name_margin')})
-          }
-          .alignItems(HorizontalAlign.Start)
-          .margin({ left: $r('app.float.setting_account_margin')})
-        }
-        .margin({ top: $r('app.float.setting_account_margin')})
-        .alignItems(VerticalAlign.Center)
-        .width(CommonConstants.FULL_PARENT)
-        .height($r('app.float.setting_account_height'))
-        .backgroundColor(Color.White)
-        .padding({ left: $r('app.float.setting_account_padding') })
-        .borderRadius($r('app.float.setting_account_radius'))
+        NavRouter()
+        {
+          Row() {
+            Row() {
+              Image($r('app.media.ic_account'))
+                .borderRadius('20.00vp')
+                .height(40)
+                .width('40.00vp')
+                .margin({ top: '0.00vp', right: '5.00vp', bottom: '0.00vp', left: '20.00vp' })
 
+              Column() {
+                Text(this.userInfo?.preferred_username)
+                  .fontSize($r('app.float.setting_account_fontSize'))
+                Text(this.userInfo?.email)
+                  .fontSize($r('app.float.little_text_size'))
+                  .margin({ top: $r('app.float.setting_name_margin')})
+              }
+              .alignItems(HorizontalAlign.Start)
+              .margin({ left: $r('app.float.setting_account_margin')})
+            }
+
+            Image($r('app.media.ic_public_arrow_right'))
+              .fillColor($r('sys.color.ohos_id_color_foreground'))
+              .opacity(0.2)
+              .width(12)
+              .height(24)
+          }
+          .width('100%')
+          .height(80)
+          .padding({ left: 8, right: 12 })
+          .margin({ top: 16 })
+          .backgroundColor($r('sys.color.ohos_fa_list_card_bg'))
+          .justifyContent(FlexAlign.SpaceBetween)
+          .borderRadius(20)
+          .id('dearUserRow')
+
+          NavDestination() {
+            UserInfoPage()
+          }
+          .title('我的账户')
+          .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+        }
         List() {
           ForEach(mainViewModel.getSettingListData(), (item: ItemData) => {
             ListItem() {
@@ -71,9 +102,44 @@ export default struct Setting {
               navigateToPage(item.id)
             })
           }, (item: ItemData, index: number) => index + JSON.stringify(item))
+          ListItem() {
+            Row() {
+              Row({ space: CommonConstants.COMMON_SPACE }) {
+                Image($r('app.media.world_clock'))
+                  .width($r('app.float.setting_size'))
+                  .height($r('app.float.setting_size'))
+                Text(localizationManager.getLocalized('MyProjectName::Language'))
+                  .fontSize($r('app.float.normal_text_size'))
+              }
+              Image($r('app.media.ic_right_grey'))
+                .width($r('app.float.setting_jump_width'))
+                .height($r('app.float.setting_jump_height'))
+            }
+            .bindMenu(
+              this.languages.map((language): MenuItem => ({
+                value: localizationManager.getLocalized(language.displayName),
+                action: async () => {
+                  // 在此编写对应的操作
+                  await AppStorage.setOrCreate('User_Language', language.cultureName)
+                  await localizationManager.init();
+                  //切换到首页
+                  await router.replaceUrl({
+                    url: 'pages/MainPage'
+                  });
+                }
+              })),
+            )
+            .justifyContent(FlexAlign.SpaceBetween)
+            .width(CommonConstants.FULL_PARENT)
+            .padding({
+              left: $r('app.float.setting_cell_left'),
+              right: $r('app.float.setting_cell_right')
+            })
+          }
+          .height($r('app.float.setting_list_height'))
         }
         .width(CommonConstants.FULL_PARENT)
-        .height($r('app.float.list_all_height'))
+        .height('380vp')
         .backgroundColor(Color.White)
         .divider({
           strokeWidth: $r('app.float.setting_list_width'),
@@ -124,4 +190,9 @@ function navigateToPage(id: string) {
       // 默认导航
       break;
   }
+}
+
+interface MenuItem {
+  value: string;
+  action: () => void;
 }

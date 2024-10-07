@@ -55,40 +55,47 @@ struct MainPage {
   }
 
   build() {
-    Tabs({
-      barPosition: BarPosition.End,
-      controller: this.tabsController
-    }) {
-      TabContent() {
-        this.tabTitles($r('app.string.main_tab_home'))
-        Home()
-      }
-      .padding({
-        left: $r('app.float.main_padding'),
-        right: $r('app.float.main_padding')
-      })
-      .backgroundColor($r('app.color.main_background'))
-      .tabBar(this.baseTab($r('app.string.home_title'), CommonConstants.HOME_TAB_INDEX,
-        $r('app.media.ic_home_selected'), $r('app.media.ic_home_normal')))
+    Column() {
+      Navigation() {
+        Tabs({
+          barPosition: BarPosition.End,
+          controller: this.tabsController
+        }) {
+          TabContent() {
+            this.tabTitles($r('app.string.main_tab_home'))
+            Home()
+          }
+          .padding({
+            left: $r('app.float.main_padding'),
+            right: $r('app.float.main_padding')
+          })
+          .backgroundColor($r('app.color.main_background'))
+          .tabBar(this.baseTab($r('app.string.home_title'), CommonConstants.HOME_TAB_INDEX,
+            $r('app.media.ic_home_selected'), $r('app.media.ic_home_normal')))
 
-      TabContent() {
-        this.tabTitles($r('app.string.main_tab_mine'))
-        Setting()
+          TabContent() {
+            this.tabTitles($r('app.string.main_tab_mine'))
+            Setting()
+          }
+          .padding({
+            left: $r('app.float.main_padding'),
+            right: $r('app.float.main_padding')
+          })
+          .backgroundColor($r('app.color.main_background'))
+          .tabBar(this.baseTab($r('app.string.mine_title'), CommonConstants.MINE_TAB_INDEX,
+            $r('app.media.ic_mine_selected'), $r('app.media.ic_mine_normal')))
+        }
+        .width(CommonConstants.FULL_PARENT)
+        .backgroundColor(Color.White)
+        .barHeight($r('app.float.main_bar_height'))
+        .barMode(BarMode.Fixed)
+        .onChange((index: number) => {
+          this.index = index
+        })
       }
-      .padding({
-        left: $r('app.float.main_padding'),
-        right: $r('app.float.main_padding')
-      })
-      .backgroundColor($r('app.color.main_background'))
-      .tabBar(this.baseTab($r('app.string.mine_title'), CommonConstants.MINE_TAB_INDEX,
-        $r('app.media.ic_mine_selected'), $r('app.media.ic_mine_normal')))
+      .hideToolBar(true)
+      .width('100%')
+      .height('100%')
     }
-    .width(CommonConstants.FULL_PARENT)
-    .backgroundColor(Color.White)
-    .barHeight($r('app.float.main_bar_height'))
-    .barMode(BarMode.Fixed)
-    .onChange((index: number) => {
-      this.index = index
-    })
   }
 }

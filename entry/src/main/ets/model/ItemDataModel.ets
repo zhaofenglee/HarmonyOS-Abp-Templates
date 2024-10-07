@@ -12,7 +12,7 @@ export default class ItemDataModel {
   /**
    * Text of list item.
    */
-  title: Resource;
+  title: Resource|string;
 
   /**
    * Image of list item.
@@ -24,7 +24,7 @@ export default class ItemDataModel {
    */
   others?: Resource;
 
-  constructor(id: string, title: Resource, img?: Resource, others?: Resource) {
+  constructor(id: string, title: Resource|string, img?: Resource, others?: Resource) {
     this.id = id;
     this.title = title;
     this.img = img;

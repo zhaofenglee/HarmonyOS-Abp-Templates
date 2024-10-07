@@ -9,6 +9,9 @@ import PromptUtil from '../common/utils/PromptUtil';
 import UserAuthModel from '../model/UserAuthModel';
 import Logger from '../common/utils/Logger';
 import { login,mockLogin } from '../../../../src/common/api/Account';
+import localizationManager from '../../../common/utils/LocalizationManager';
+import applicationConfigurationManager from '../../../common/utils/ApplicationConfigurationManager';
+import deviceInfo from '@ohos.deviceInfo'
 
 @Extend(TextInput)
 function inputStyle() {
@@ -50,7 +53,17 @@ struct LoginPage {
   @StorageLink('userLogin') userLogin: boolean = false;
   private keyAlias: string = CommonConstants.LOGIN_KEYS;
 
-  onPageShow() {
+  async aboutToAppear()
+  {
+    //如果为空表示预览器，emulator代表模拟器
+    if (deviceInfo.productModel==="") {
+      await localizationManager.init();
+      await applicationConfigurationManager.init();
+    }
+
+  }
+
+  async onPageShow() {
     window.getLastWindow(getContext(this)).then((windowStage: window.Window) => {
       windowStage.setWindowPrivacyMode(true);
     });
@@ -188,6 +201,7 @@ struct LoginPage {
           left: $r('app.float.forgot_margin_left'),
           right: $r('app.float.forgot_margin_right')
         })
+        //Text(localizationManager.getLocalized('LeptonX::Login'))
 
         Button($r('app.string.login'), { type: ButtonType.Capsule })
           .width(CommonConstants.BUTTON_WIDTH)

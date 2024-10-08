@@ -2,7 +2,7 @@
  * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
  */
 
-import CommonConstants from '../constants/CommonConstants';
+import CommonConstants from '../../main/ets/common/constants/CommonConstants';
 import { promptAction } from '@kit.ArkUI';
 
 /**

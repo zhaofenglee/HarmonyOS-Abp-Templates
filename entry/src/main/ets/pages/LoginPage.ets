@@ -5,7 +5,7 @@
 import CommonConstants from '../common/constants/CommonConstants';
 import { router, window } from '@kit.ArkUI';
 import PreferenceModel from '../model/PreferenceModel';
-import PromptUtil from '../common/utils/PromptUtil';
+import PromptUtil from '../../../common/utils/PromptUtil';
 import UserAuthModel from '../model/UserAuthModel';
 import Logger from '../common/utils/Logger';
 import { login,mockLogin } from '../../../../src/common/api/Account';

@@ -3,7 +3,7 @@
  */
 
 import CommonConstants from '../common/constants/CommonConstants';
-import PromptUtil from '../common/utils/PromptUtil';
+import PromptUtil from '../../../common/utils/PromptUtil';
 import HuksModel from '../model/HuksModel';
 import { BusinessError } from '@kit.BasicServicesKit';
 import Logger from '../common/utils/Logger';

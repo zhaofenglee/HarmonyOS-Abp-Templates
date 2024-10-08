@@ -131,4 +131,5 @@ class LocalizationManager {
 }
 
 const localizationManager = new LocalizationManager();
+const l = localizationManager;
 export default localizationManager;

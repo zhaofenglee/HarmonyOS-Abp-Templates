@@ -21,9 +21,11 @@ localizationManager.getLocalized('MyProjectName::Login')
 #### 3.语言切换
 ![img3.png](/docs/img3.png)
 
+#### 4.密码修改
+![img4.png](/docs/img4.png)
+
 ### 待实现功能
 #### 1.修改用户图像
-#### 2.修改用户密码
 
 
 ### 参考资料

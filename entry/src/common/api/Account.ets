@@ -1,5 +1,6 @@
-import axios, { AxiosResponse } from '@ohos/axios'
+import axios, { AxiosError, AxiosResponse } from '@ohos/axios'
 import {oAuthConfig,} from '../config/environment'
+import PromptUtil from '../utils/PromptUtil';
 
 interface LoginData {
   username: string;
@@ -20,6 +21,29 @@ export interface UserInfo {
   email: string;
 }
 
+interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+}
+
+// 创建自定义的 axios 实例
+const axiosInstance = axios.create({
+  baseURL: oAuthConfig.issuer,
+  // 可以根据需要添加其他配置
+});
+
+interface ErrorResponseData {
+  // 定义错误响应数据的类型
+  error: BadRequest;
+}
+
+interface BadRequest {
+  code: string;
+  message: string;
+  details: string | null;
+  data: object;
+  validationErrors: object;
+}
 
 const getLoginData = (username: string, password: string): string => {
   const formData = new Map<string, string>();
@@ -44,12 +68,11 @@ const getLoginData = (username: string, password: string): string => {
 };
 
 export const login = async (loginData: LoginData): Promise<ApiResponse> => {
-  const response: AxiosResponse<ApiResponse> = await axios.post<ApiResponse>(
+  const response: AxiosResponse<ApiResponse> = await axiosInstance.post<ApiResponse>(
     '/connect/token',
     getLoginData(loginData.username, loginData.password),
     {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      baseURL: oAuthConfig.issuer,
     }
   );
   console.info("result", JSON.stringify(response.data));
@@ -127,7 +150,7 @@ export const getUserInfo = async (token: string): Promise<UserInfo | undefined> 
     const response: AxiosResponse<UserInfo> = await axios.get<UserInfo>(
       '/connect/userinfo',
       {
-        headers: { 
+        headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': `Bearer ${token}`
         },
@@ -141,3 +164,65 @@ export const getUserInfo = async (token: string): Promise<UserInfo | undefined> 
     return undefined;
   }
 };
+
+export const changePassword = async (passwordData: ChangePasswordData): Promise<void> => {
+  const token:string  =  AppStorage.get('access_token')??'1';
+  await axiosInstance.post<void>(
+    '/api/account/my-profile/change-password',
+    passwordData,
+    {
+      headers: { 'Authorization': 'Bearer '+token },
+    }
+  ).then((response: AxiosResponse<void>) => {
+    return response.data;
+  });
+
+};
+
+
+// 添加响应拦截器
+axiosInstance.interceptors.response.use(
+  (response: AxiosResponse) => {
+    // 对响应数据做点什么
+    return response;
+  },
+  (error: AxiosError) => {
+    // 对响应错误做统一处理
+    if (error.response) {
+      console.log("error:" + JSON.stringify(error));
+      const data = error.response.data as ErrorResponseData // cast the data property to 'unknown' type
+      if (data)
+      {
+        handleErrorStatusCode(error.response.status,data);
+      }
+      else
+      {
+        PromptUtil.promptMessage(error.message,3000);
+      }
+    } else {
+      console.error("error:" + JSON.stringify(error));
+    }
+    return Promise.reject(error);
+  }
+);
+
+// 通用的错误处理函数
+function handleErrorStatusCode(status: number,data: ErrorResponseData): void {
+  console.log("error.message:" + data.error.message);
+  console.log("error.details:" + data.error.details);
+  switch (status) {
+    case 401:
+      console.log('handleErrorStatusCode:401');
+      break;
+    case 403:
+      console.log('handleErrorStatusCode:403');
+      break;
+    case 404:
+      console.log('handleErrorStatusCode:404');
+      break;
+    default:
+      console.log('handleErrorStatusCode:default');
+      break;
+  }
+  PromptUtil.promptMessage(`${data.error.message}`+`${data.error.details?'\n'+data.error.details:''}`,3000);
+}

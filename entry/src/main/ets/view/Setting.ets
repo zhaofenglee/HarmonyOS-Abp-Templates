@@ -10,7 +10,7 @@ import { logout,UserInfo } from '../../../../src/common/api/Account';
 import { AvoidRepeatClick } from '../common/AvoidRepeatClick';
 import { RegisterPage } from './RegisterPage';
 import { UserInfoPage } from './UserInfoPage';
-import localizationManager from '../../../common/utils/LocalizationManager';
+import l from '../../../common/utils/LocalizationManager';
 import applicationConfigurationManager, {Language}  from '../../../common/utils/ApplicationConfigurationManager';
 
 
@@ -89,7 +89,7 @@ export default struct Setting {
             UserInfoPage()
           }
           .title('我的账户')
-          .backgroundColor($r('sys.color.ohos_id_color_sub_background'))
+
         }
         List() {
           ForEach(mainViewModel.getSettingListData(), (item: ItemData) => {
@@ -108,7 +108,7 @@ export default struct Setting {
                 Image($r('app.media.world_clock'))
                   .width($r('app.float.setting_size'))
                   .height($r('app.float.setting_size'))
-                Text(localizationManager.getLocalized('MyProjectName::Language'))
+                Text(l.getLocalized('MyProjectName::Language'))
                   .fontSize($r('app.float.normal_text_size'))
               }
               Image($r('app.media.ic_right_grey'))
@@ -117,11 +117,11 @@ export default struct Setting {
             }
             .bindMenu(
               this.languages.map((language): MenuItem => ({
-                value: localizationManager.getLocalized(language.displayName),
+                value: l.getLocalized(language.displayName),
                 action: async () => {
                   // 在此编写对应的操作
                   await AppStorage.setOrCreate('User_Language', language.cultureName)
-                  await localizationManager.init();
+                  await l.init();
                   //切换到首页
                   await router.replaceUrl({
                     url: 'pages/MainPage'

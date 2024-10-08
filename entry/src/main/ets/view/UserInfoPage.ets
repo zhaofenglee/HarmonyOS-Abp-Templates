@@ -1,6 +1,7 @@
 import { ItemGroup } from "../components/ItemGroup"
 import { SubItemArrow } from "../components/SubItemArrow"
-
+import { ChangePassword } from "./ChangePassword"
+import l from '../../../common/utils/LocalizationManager';
 @Component
 export struct UserInfoPage {
   @Builder
@@ -25,29 +26,21 @@ export struct UserInfoPage {
           .strokeWidth('1px')
           .color($r('sys.color.ohos_id_color_list_separator'))
           .margin({left: 12, right: 8})
-        SubItemArrow({title: '修改密码'})
-      }
-
-      Column() {
-
-
-        Row().height(16)
-
-
-      }
-      .margin({ bottom: 19.5 })
-      .flexShrink(0)
-
-      Scroll() {
+        NavRouter()
+        {
+          SubItemArrow({title: l.getLocalized('AbpUi::ChangePassword')})
+          NavDestination() {
+            ChangePassword()
+          }
+          .title(l.getLocalized('AbpUi::ChangePassword'))
+        }
 
       }
-      .scrollable(ScrollDirection.Vertical)
-      .scrollBar(BarState.Off)
-      .width('100%')
-      .flexShrink(1)
+
     }
     .width('100%')
     .height('100%')
     .padding({ left: 12, right: 12 })
+    .backgroundColor($r('app.color.background'))
   }
 }

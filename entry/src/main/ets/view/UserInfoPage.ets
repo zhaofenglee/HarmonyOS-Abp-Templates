@@ -2,6 +2,8 @@ import { ItemGroup } from "../components/ItemGroup"
 import { SubItemArrow } from "../components/SubItemArrow"
 import { ChangePassword } from "./ChangePassword"
 import l from '../../../common/utils/LocalizationManager';
+import { PersonalInfoPage } from "./PersonalInfoPage";
+
 @Component
 export struct UserInfoPage {
   @Builder
@@ -16,12 +18,19 @@ export struct UserInfoPage {
     Column() {
       Blank().height(5)
       ItemGroup() {
-        SubItemArrow({title: '个人信息'})
+        NavRouter()
+        {
+          SubItemArrow({title: l.getLocalized('AbpUi::PersonalInfo')})
+          NavDestination() {
+            PersonalInfoPage()
+          }
+          .title(l.getLocalized('AbpUi::PersonalInfo'))
+        }
         Divider()
           .strokeWidth('1px')
           .color($r('sys.color.ohos_id_color_list_separator'))
           .margin({left: 12, right: 8})
-        SubItemArrow({title: '更改头像'})
+        SubItemArrow({title: l.getLocalized('AbpAccount::ProfilePicture')})
         Divider()
           .strokeWidth('1px')
           .color($r('sys.color.ohos_id_color_list_separator'))

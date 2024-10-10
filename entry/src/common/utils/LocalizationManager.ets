@@ -72,7 +72,7 @@ class LocalizationManager {
     }
 
     private getDefaultLanguage(): string {
-        return 'en';
+        return 'zh-Hans';
     }
 
     async fetchLocalizationData(language: string) {
@@ -120,7 +120,6 @@ class LocalizationManager {
 
         const module = formattedString.substring(0, splitIndex);
         const key = formattedString.substring(splitIndex + 2);
-        console.log('check cache'+JSON.stringify(this.cache));
         if (!this.cache || !this.cache.resources[module]) {
             return formattedString;
         }

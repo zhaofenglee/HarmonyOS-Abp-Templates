@@ -107,13 +107,14 @@ struct LoginPage {
     Logger.info('password' + this.password)
     try {
       //TODO：需要把模拟登录切换成login
-      const response = await mockLogin({
+      const response = await login({
         username: this.account,
         password: this.password
       });
       Logger.info('access_token:' + response.access_token)
       if (response.access_token) {
         this.userLogin = true;
+        await applicationConfigurationManager.init();
         router.replaceUrl({
           url: 'pages/MainPage'
         });

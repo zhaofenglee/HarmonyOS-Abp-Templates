@@ -12,6 +12,8 @@ import { RegisterPage } from './RegisterPage';
 import { UserInfoPage } from './UserInfoPage';
 import l from '../../../common/utils/LocalizationManager';
 import applicationConfigurationManager, {Language}  from '../../../common/utils/ApplicationConfigurationManager';
+import abp from '../../../common/store/Abp';
+import { oAuthConfig } from '../../../common/config/environment';
 
 
 /**
@@ -20,6 +22,7 @@ import applicationConfigurationManager, {Language}  from '../../../common/utils/
 @Component
 export default struct Setting {
   private userInfo = AppStorage.get('userInfo') as UserInfo;
+  @State defaultImage:string = `${oAuthConfig.issuer}/api/account/profile-picture-file/${abp.currentUser.id}`;
   @State languages:Language[]=[]
 
   async aboutToAppear() {
@@ -53,7 +56,7 @@ export default struct Setting {
         {
           Row() {
             Row() {
-              Image($r('app.media.ic_account'))
+              Image(this.defaultImage)
                 .borderRadius('20.00vp')
                 .height(40)
                 .width('40.00vp')
@@ -88,7 +91,7 @@ export default struct Setting {
           NavDestination() {
             UserInfoPage()
           }
-          .title('我的账户')
+          .title(l.getLocalized('AbpAccount::MyAccount'))
 
         }
         List() {
@@ -108,7 +111,7 @@ export default struct Setting {
                 Image($r('app.media.world_clock'))
                   .width($r('app.float.setting_size'))
                   .height($r('app.float.setting_size'))
-                Text(l.getLocalized('MyProjectName::Language'))
+                Text(l.getLocalized('AbpUi::Language'))
                   .fontSize($r('app.float.normal_text_size'))
               }
               Image($r('app.media.ic_right_grey'))

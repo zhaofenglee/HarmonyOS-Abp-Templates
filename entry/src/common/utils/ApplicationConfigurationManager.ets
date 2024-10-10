@@ -1,6 +1,7 @@
 import fetch from '@system.fetch';
 import preferences from '@ohos.data.preferences';
 import { axiosInstance, AxiosResponse } from '../api/Api';
+import abp,{ Auth, CurrentUser } from '../store/Abp';
 
 interface ApplicationConfiguration {
     localization: Localization;
@@ -66,32 +67,10 @@ interface LanguageMapItem {
     value: string;
 }
 
-interface Auth {
-    grantedPolicies: Record<string, boolean>;
-}
-
 interface Setting {
     values: Record<string, string>;
 }
 
-interface CurrentUser {
-    isAuthenticated: boolean;
-    id: string | null;
-    tenantId: string | null;
-    impersonatorUserId: string | null;
-    impersonatorTenantId: string | null;
-    impersonatorUserName: string | null;
-    impersonatorTenantName: string | null;
-    userName: string | null;
-    name: string | null;
-    surName: string | null;
-    email: string | null;
-    emailVerified: boolean;
-    phoneNumber: string | null;
-    phoneNumberVerified: boolean;
-    roles: string[];
-    sessionId: string | null;
-}
 
 interface Features {
     values: Record<string, string>;
@@ -196,10 +175,19 @@ class ApplicationConfigurationManager {
     async fetchApplicationConfiguration() {
         try {
             // 请求应用配置数据
+            const token:string  =  AppStorage.get('access_token')??'';
+            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             const response: AxiosResponse = await axiosInstance.get('/api/abp/application-configuration?IncludeLocalizationResources=false');
             if (response.status === 200) {
                 this.cache = response.data;
                 console.log('应用配置数据：' + JSON.stringify(this.cache));
+                if (this.cache?.currentUser) {
+                    abp.setCurrentUser(this.cache.currentUser)
+                }
+                if (this.cache?.auth) {
+                    abp.setAuth(this.cache.auth)
+                }
+
                 // 保存配置到本地缓存
                 await this.saveToPreferences('application_configuration', JSON.stringify(this.cache));
             } else {

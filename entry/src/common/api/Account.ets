@@ -26,6 +26,26 @@ interface ChangePasswordData {
   newPassword: string;
 }
 
+interface Profile  {
+  userName: string;
+  email: string;
+  name: string;
+  surname: string;
+  phoneNumber: string | null,
+  isExternal: boolean;
+  hasPassword: boolean;
+  concurrencyStamp: string| null;
+}
+
+interface UpdateProfile  {
+  userName: string;
+  email: string;
+  name: string;
+  surname: string| null;
+  phoneNumber: string | null;
+  concurrencyStamp: string| null;
+}
+
 // 创建自定义的 axios 实例
 const axiosInstance = axios.create({
   baseURL: oAuthConfig.issuer,
@@ -177,6 +197,48 @@ export const changePassword = async (passwordData: ChangePasswordData): Promise<
     return response.data;
   });
 
+};
+
+
+export const getProfile = async (): Promise<Profile | undefined> => {
+  try {
+    const token:string  =  AppStorage.get('access_token')??'';
+    const response: AxiosResponse<Profile> = await axios.get<Profile>(
+      '/api/account/my-profile',
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        baseURL: oAuthConfig.issuer,
+      }
+    );
+    console.log('my profile:', JSON.stringify(response.data));
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch user info:', error);
+    return undefined;
+  }
+};
+
+export const updateProfile = async (updateProfile:UpdateProfile): Promise<Profile | undefined> => {
+  try {
+    const token:string  =  AppStorage.get('access_token')??'';
+    const response: AxiosResponse<Profile> = await axios.put<Profile>(
+      '/api/account/my-profile',
+      updateProfile,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        baseURL: oAuthConfig.issuer,
+      }
+    );
+    console.log('my profile:', JSON.stringify(response.data));
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch user info:', error);
+    return undefined;
+  }
 };
 
 

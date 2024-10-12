@@ -12,6 +12,7 @@ import { login,mockLogin } from '../../../../src/common/api/Account';
 import localizationManager from '../../../common/utils/LocalizationManager';
 import applicationConfigurationManager from '../../../common/utils/ApplicationConfigurationManager';
 import deviceInfo from '@ohos.deviceInfo'
+import abp from '../../../common/store/Abp';
 
 @Extend(TextInput)
 function inputStyle() {
@@ -67,6 +68,18 @@ struct LoginPage {
     window.getLastWindow(getContext(this)).then((windowStage: window.Window) => {
       windowStage.setWindowPrivacyMode(true);
     });
+    const token:string|undefined  =  AppStorage.get('access_token');
+    if (token){
+      await applicationConfigurationManager.init();
+      if (abp.currentUser.isAuthenticated)
+      {
+        this.userLogin = true;
+        router.replaceUrl({
+          url: 'pages/MainPage'
+        });
+      }
+
+    }
     this.isFace = PreferenceModel.getPreference(CommonConstants.IS_SHOW_FACE, false) as boolean;
     this.isFingerprint = PreferenceModel.getPreference(CommonConstants.IS_SHOW_FINGERPRINT, false) as boolean;
   }

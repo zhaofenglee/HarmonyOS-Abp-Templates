@@ -6,9 +6,7 @@ import CommonConstants from '../common/constants/CommonConstants'
 import ItemData from '../model/ItemDataModel'
 import mainViewModel from '../viewmodel/MainViewModel'
 import { router } from '@kit.ArkUI'
-import { logout,UserInfo } from '../../../../src/common/api/Account';
-import { AvoidRepeatClick } from '../common/AvoidRepeatClick';
-import { RegisterPage } from './RegisterPage';
+import { logout } from '../../../../src/common/api/Account';
 import { UserInfoPage } from './UserInfoPage';
 import l from '../../../common/utils/LocalizationManager';
 import applicationConfigurationManager, {Language}  from '../../../common/utils/ApplicationConfigurationManager';
@@ -21,7 +19,6 @@ import { oAuthConfig } from '../../../common/config/environment';
  */
 @Component
 export default struct Setting {
-  private userInfo = AppStorage.get('userInfo') as UserInfo;
   @State defaultImage:string = `${oAuthConfig.issuer}/api/account/profile-picture-file/${abp.currentUser.id}`;
   @State languages:Language[]=[]
 
@@ -63,9 +60,9 @@ export default struct Setting {
                 .margin({ top: '0.00vp', right: '5.00vp', bottom: '0.00vp', left: '20.00vp' })
 
               Column() {
-                Text(this.userInfo?.preferred_username)
+                Text(`${abp.currentUser.surName??''}${abp.currentUser.userName}`)
                   .fontSize($r('app.float.setting_account_fontSize'))
-                Text(this.userInfo?.email)
+                Text(abp.currentUser.email)
                   .fontSize($r('app.float.little_text_size'))
                   .margin({ top: $r('app.float.setting_name_margin')})
               }

@@ -100,7 +100,7 @@ export const login = async (loginData: LoginData): Promise<ApiResponse> => {
     console.log('Written token to storage');
     AppStorage.setOrCreate('token_type', response.data.token_type)
     AppStorage.setOrCreate('expires_in', response.data.expires_in)
-    AppStorage.setOrCreate('access_token', response.data.access_token)
+    PersistentStorage.persistProp('access_token', response.data.access_token)
     AppStorage.setOrCreate('refresh_token', response.data.refresh_token)
     const userInfo = await getUserInfo(response.data.access_token)
     if (userInfo) {
@@ -159,6 +159,7 @@ export const logout = async (): Promise<void> => {
         baseURL: oAuthConfig.issuer,
       }
     );
+    AppStorage.setOrCreate('access_token', '')
     console.info("Logout successful", response);
   } catch (error) {
     console.error("Logout failed", error);
